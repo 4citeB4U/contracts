@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+  LEEWAY_HEADER
+  FILE: deck-restoration-contractor-packet.html
+  TAG: UI.PUBLIC.PAGE.CONTRACTOR_DECK_ESTIMATE
+  REGION: 🔵 UI
+  DISCOVERY_PIPELINE: Voice → Intent → Location → Vertical → Ranking → Render
+  PURPOSE: Single-file contractor estimate/proposal/signature/print/device-email/Telegram share packet for deck restoration jobs.
+  -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deck Restoration Contractor Packet</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #637083;
+      --line: #d9e1ec;
+      --brand: #123c69;
+      --brand2: #0f766e;
+      --danger: #b42318;
+      --soft: #eef6ff;
+      --shadow: 0 14px 40px rgba(20, 30, 60, 0.12);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      background: linear-gradient(135deg, #123c69, #0f766e);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2.1rem);
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: rgba(255,255,255,.86);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      padding: 10px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0;
+      background: rgba(244,247,251,.92);
+      backdrop-filter: blur(8px);
+      padding: 12px 0;
+    }
+
+    button, .button-link {
+      border: 0;
+      border-radius: 12px;
+      background: var(--brand);
+      color: #fff;
+      padding: 12px 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+
+    button.secondary, .button-link.secondary { background: var(--brand2); }
+    button.light { background: #e8eef6; color: var(--ink); }
+    button.danger { background: var(--danger); }
+
+    button:hover, .button-link:hover { filter: brightness(.95); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.04);
+    }
+
+    .card h2, .card h3 {
+      margin-top: 0;
+      color: var(--brand);
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: .9rem;
+      margin: 12px 0 6px;
+      color: #25324a;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .third-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    .notice {
+      background: var(--soft);
+      border: 1px solid #cfe5ff;
+      border-radius: 14px;
+      padding: 14px;
+      color: #1d3557;
+      margin: 12px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: #eef3f9; color: var(--brand); }
+
+    .money { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .total-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      background: #0f172a;
+      color: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 14px;
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    .signature-wrap {
+      border: 1px dashed #9aa8ba;
+      border-radius: 14px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 180px;
+      border-radius: 10px;
+      background: #fbfdff;
+      border: 1px solid var(--line);
+      touch-action: none;
+      display: block;
+    }
+
+    .preview-document {
+      background: #fff;
+      padding: 32px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      margin-top: 18px;
+    }
+
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      border-bottom: 3px solid var(--brand);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .doc-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--brand);
+      margin: 0;
+    }
+
+    .small { color: var(--muted); font-size: .9rem; }
+    .muted { color: var(--muted); }
+
+    .sig-img {
+      max-height: 90px;
+      max-width: 280px;
+      border-bottom: 1px solid #111827;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .hidden { display: none !important; }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    @media (max-width: 820px) {
+      .grid, .mini-grid, .third-grid { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .doc-header { flex-direction: column; }
+      .app-shell { padding: 14px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .no-print, .toolbar, .topbar, .card.input-card { display: none !important; }
+      .app-shell { padding: 0; max-width: none; }
+      .preview-document {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+      }
+      button, input, textarea, select { display: none !important; }
+      .print-only { display: block !important; }
+      table { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar no-print">
+      <div>
+        <h1>Deck Restoration Contractor Packet</h1>
+        <p>Fill it out, capture signatures, print/save as PDF, download a signed copy, use your device email, or share through Telegram.</p>
+      </div>
+      <div class="badge">🔵 LEEWAY Contractor Form</div>
+    </header>
+
+    <nav class="toolbar no-print">
+      <button onclick="syncPreview()">Update Preview</button>
+      <button class="secondary" onclick="window.print()">Print / Save PDF</button>
+      <button class="light" onclick="downloadSignedHtml()">Download Signed Copy</button>
+      <button class="light" onclick="saveLocalDraft()">Save Draft</button>
+      <button class="light" onclick="loadLocalDraft()">Load Draft</button>
+      <button class="danger" onclick="clearForm()">Clear Form</button>
+      <a id="emailLink" class="button-link secondary" href="#">Open Device Email</a>
+      <button class="secondary" onclick="shareSignedFile()">Share Signed Copy</button>
+      <button class="secondary" onclick="openTelegramShare()">Send With Telegram</button>
+      <button class="light" onclick="copySummaryText()">Copy Message</button>
+    </nav>
+
+    <section class="grid no-print">
+      <div class="card input-card">
+        <h2>1. Business + Client Info</h2>
+        <div class="mini-grid">
+          <div>
+            <label>Business Name</label>
+            <input id="businessName" value="Your Business Name" />
+          </div>
+          <div>
+            <label>Business Phone</label>
+            <input id="businessPhone" placeholder="(414) 000-0000" />
+          </div>
+          <div>
+            <label>Business Email</label>
+            <input id="businessEmail" placeholder="you@example.com" />
+          </div>
+          <div>
+            <label>Estimate / Proposal #</label>
+            <input id="estimateNo" />
+          </div>
+          <div>
+            <label>Client Name</label>
+            <input id="clientName" placeholder="Client full name" />
+          </div>
+          <div>
+            <label>Client Phone</label>
+            <input id="clientPhone" placeholder="Client phone" />
+          </div>
+          <div>
+            <label>Client Email</label>
+            <input id="clientEmail" placeholder="Client email" />
+          </div>
+          <div>
+            <label>Date</label>
+            <input id="proposalDate" type="date" />
+          </div>
+          <div class="full">
+            <label>Project Address</label>
+            <input id="projectAddress" placeholder="Street, city, state, ZIP" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card input-card">
+        <h2>2. Project Details</h2>
+        <div class="third-grid">
+          <div>
+            <label>Length ft.</label>
+            <input id="deckLength" type="number" value="50" />
+          </div>
+          <div>
+            <label>Width ft.</label>
+            <input id="deckWidth" type="number" value="25" />
+          </div>
+          <div>
+            <label>Height / Access ft.</label>
+            <input id="deckHeight" type="number" value="18" />
+          </div>
+        </div>
+        <label>Project Type</label>
+        <select id="projectType">
+          <option>Deck restoration / repair</option>
+          <option>Deck resurfacing</option>
+          <option>Partial deck rebuild</option>
+          <option>Full deck rebuild</option>
+        </select>
+        <label>Scope Summary</label>
+        <textarea id="scopeSummary">Restore existing back deck. Inspect visible conditions, remove damaged materials, repair approved structural areas, replace damaged decking as needed, secure loose boards, prepare surface, clean jobsite, and apply stain/sealer if included.</textarea>
+        <label>Exclusions / Notes</label>
+        <textarea id="exclusions">Hidden rot, failed framing, unsafe ledger connections, major stair rebuilds, major railing replacement, permits, electrical work, landscaping, or code-related repairs are not included unless approved by written change order.</textarea>
+      </div>
+    </section>
+
+    <section class="card input-card no-print">
+      <h2>3. Itemized Pricing</h2>
+      <div class="notice">Enter your numbers. The total updates automatically when you click <strong>Update Preview</strong>.</div>
+      <table>
+        <thead>
+          <tr><th>Line Item</th><th>Description</th><th class="money">Amount</th></tr>
+        </thead>
+        <tbody id="pricingRows"></tbody>
+      </table>
+      <button class="light" onclick="addPricingRow()">Add Line Item</button>
+    </section>
+
+    <section class="grid no-print">
+      <div class="card input-card">
+        <h2>4. Payment Schedule</h2>
+        <div class="mini-grid">
+          <div>
+            <label>Deposit Due</label>
+            <input id="deposit" type="number" value="0" />
+          </div>
+          <div>
+            <label>Progress Payment</label>
+            <input id="progressPayment" type="number" value="0" />
+          </div>
+          <div>
+            <label>Final Payment</label>
+            <input id="finalPayment" type="number" value="0" />
+          </div>
+          <div>
+            <label>Estimate Valid Until</label>
+            <input id="validUntil" type="date" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card input-card">
+        <h2>5. Client Signature</h2>
+        <div class="signature-wrap">
+          <canvas id="signaturePad"></canvas>
+          <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+            <button class="light" onclick="clearSignature()">Clear Signature</button>
+            <button onclick="captureSignature()">Save Signature</button>
+          </div>
+        </div>
+        <label>Signed By</label>
+        <input id="signedBy" placeholder="Client name" />
+        <label>Signature Date</label>
+        <input id="signatureDate" type="date" />
+      </div>
+    </section>
+
+    <section class="card input-card no-print">
+      <h2>6. Send + Share Options</h2>
+      <div class="notice">
+        <strong>Device email:</strong> uses your phone or computer's default email app. It can prefill the recipient, subject, and body. Browser security does not allow a normal website to auto-attach a PDF through <code>mailto:</code>, so use <strong>Download Signed Copy</strong> or <strong>Print / Save PDF</strong> first if you need an attachment.<br><br>
+        <strong>Telegram:</strong> opens Telegram's share screen with the proposal summary. On supported devices, <strong>Share Signed Copy</strong> can also send the signed HTML file to Telegram, email, or another app through the device share menu.
+      </div>
+      <div class="mini-grid">
+        <div>
+          <label>Email To</label>
+          <input id="sendToEmail" placeholder="customer@example.com" />
+          <p class="small">Leave blank to use the Client Email field above.</p>
+        </div>
+        <div>
+          <label>Telegram Username / Channel Optional</label>
+          <input id="telegramTarget" placeholder="example: customerusername or channelname" />
+          <p class="small">Direct Telegram prefill to a specific person is restricted. This field opens their chat/channel after you copy or share the message.</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+        <a id="deviceEmailLink" class="button-link secondary" href="#">Open Device Email</a>
+        <button class="secondary" onclick="openTelegramShare()">Open Telegram Share</button>
+        <button class="secondary" onclick="openTelegramTarget()">Open Telegram Target</button>
+        <button class="light" onclick="copySummaryText()">Copy Summary</button>
+      </div>
+    </section>
+
+    <section id="preview" class="preview-document">
+      <!-- Preview renders here -->
+    </section>
+  </div>
+
+  <script>
+    const defaultRows = [
+      ['Site prep / inspection / setup', 'Initial site walk, documentation, layout, safety setup, and project setup.', 0],
+      ['Demolition / removal', 'Remove damaged boards, failed fasteners, unsafe sections, and approved debris.', 0],
+      ['Disposal / dump fees', 'Hauling, trailer, dumpster, dump fees, and cleanup disposal.', 0],
+      ['Structural repair allowance', 'Approved repair/reinforcement of joists, posts, beams, blocking, ledger area, or connectors.', 0],
+      ['Deck board replacement / surface repair', 'Replacement boards, fastening, alignment, spacing, and surface repairs.', 0],
+      ['Hardware / fasteners / brackets', 'Deck screws, structural screws, joist hangers, brackets, anchors, and related hardware.', 0],
+      ['Rail / stair repair allowance', 'Approved repair of railings, balusters, stairs, handrails, treads, or stringers.', 0],
+      ['Cleaning / sanding / surface prep', 'Cleaning, pressure washing, sanding, brightening, masking, and surface preparation.', 0],
+      ['Stain / seal / finish', 'Finish material and application if included in final scope.', 0],
+      ['Equipment / consumables', 'Saw blades, bits, sandpaper, brushes, rollers, safety gear, tarps, and tool wear.', 0],
+      ['Labor', 'Labor for approved restoration scope.', 0],
+      ['Overhead / profit / contingency', 'Business overhead, profit, contingency, administration, and project risk allowance.', 0]
+    ];
+
+    let signatureData = '';
+    const $ = (id) => document.getElementById(id);
+
+    function money(n) {
+      const value = Number(n || 0);
+      return value.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+    }
+
+    function todayISO() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function nl2br(value) {
+      return escapeHtml(value).replace(/\n/g, '<br>');
+    }
+
+    function initDates() {
+      $('proposalDate').value = todayISO();
+      $('signatureDate').value = todayISO();
+      const valid = new Date();
+      valid.setDate(valid.getDate() + 14);
+      $('validUntil').value = valid.toISOString().slice(0, 10);
+      $('estimateNo').value = 'DECK-' + Date.now().toString().slice(-6);
+    }
+
+    function renderPricingRows(rows = defaultRows) {
+      const body = $('pricingRows');
+      body.innerHTML = '';
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input class="price-name" value="${escapeHtml(row[0])}"></td>
+          <td><textarea class="price-desc">${escapeHtml(row[1])}</textarea></td>
+          <td><input class="price-amount" type="number" value="${Number(row[2] || 0)}"></td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function addPricingRow() {
+      const rows = getPricingRows();
+      rows.push(['Additional item', 'Description of added work or material.', 0]);
+      renderPricingRows(rows);
+    }
+
+    function getPricingRows() {
+      return [...document.querySelectorAll('#pricingRows tr')].map(tr => [
+        tr.querySelector('.price-name').value,
+        tr.querySelector('.price-desc').value,
+        Number(tr.querySelector('.price-amount').value || 0)
+      ]);
+    }
+
+    function getTotal() {
+      return getPricingRows().reduce((sum, row) => sum + Number(row[2] || 0), 0);
+    }
+
+    function calculateSqFt() {
+      return Number($('deckLength').value || 0) * Number($('deckWidth').value || 0);
+    }
+
+    function buildSummaryText() {
+      const total = getTotal();
+      return `${$('businessName').value} - Deck Restoration Proposal\n\nClient: ${$('clientName').value}\nProject Address: ${$('projectAddress').value}\nEstimate #: ${$('estimateNo').value}\nDeck Size: ${$('deckLength').value} ft x ${$('deckWidth').value} ft = ${calculateSqFt()} sq. ft.\nProject Type: ${$('projectType').value}\nEstimated Total: ${money(total)}\nDeposit: ${money($('deposit').value)}\nProgress Payment: ${money($('progressPayment').value)}\nFinal Payment: ${money($('finalPayment').value)}\n\nScope:\n${$('scopeSummary').value}\n\nNotes:\n${$('exclusions').value}\n\nSigned By: ${$('signedBy').value}\nSignature Date: ${$('signatureDate').value}`;
+    }
+
+    function syncPreview() {
+      captureSignature(false);
+      const rows = getPricingRows();
+      const total = getTotal();
+      const sqFt = calculateSqFt();
+      const pricePerSqFt = sqFt ? total / sqFt : 0;
+
+      const rowsHtml = rows.map(row => `
+        <tr>
+          <td>${escapeHtml(row[0])}</td>
+          <td>${nl2br(row[1])}</td>
+          <td class="money">${money(row[2])}</td>
+        </tr>
+      `).join('');
+
+      $('preview').innerHTML = `
+        <div class="doc-header">
+          <div>
+            <p class="doc-title">Deck Restoration Proposal</p>
+            <div class="small">Estimate / Proposal #: ${escapeHtml($('estimateNo').value)}</div>
+            <div class="small">Date: ${escapeHtml($('proposalDate').value)}</div>
+          </div>
+          <div style="text-align:right;">
+            <strong>${escapeHtml($('businessName').value)}</strong><br>
+            <span class="small">${escapeHtml($('businessPhone').value)}</span><br>
+            <span class="small">${escapeHtml($('businessEmail').value)}</span>
+          </div>
+        </div>
+
+        <div class="grid" style="box-shadow:none;">
+          <div>
+            <h3>Prepared For</h3>
+            <p><strong>${escapeHtml($('clientName').value)}</strong><br>
+            ${escapeHtml($('clientPhone').value)}<br>
+            ${escapeHtml($('clientEmail').value)}<br>
+            ${escapeHtml($('projectAddress').value)}</p>
+          </div>
+          <div>
+            <h3>Project Summary</h3>
+            <p><strong>Project Type:</strong> ${escapeHtml($('projectType').value)}<br>
+            <strong>Estimated Size:</strong> ${escapeHtml($('deckLength').value)} ft × ${escapeHtml($('deckWidth').value)} ft = ${sqFt.toLocaleString()} sq. ft.<br>
+            <strong>Height / Access:</strong> Approx. ${escapeHtml($('deckHeight').value)} ft<br>
+            <strong>Estimated Price / Sq. Ft.:</strong> ${money(pricePerSqFt)}</p>
+          </div>
+        </div>
+
+        <h3>Scope of Work</h3>
+        <p>${nl2br($('scopeSummary').value)}</p>
+
+        <h3>Itemized Estimate</h3>
+        <table>
+          <thead><tr><th>Line Item</th><th>Description</th><th class="money">Amount</th></tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+
+        <div class="total-box">
+          <span>Estimated Total</span>
+          <span>${money(total)}</span>
+        </div>
+
+        <h3>Payment Schedule</h3>
+        <table>
+          <tbody>
+            <tr><td>Deposit Due at Approval</td><td class="money">${money($('deposit').value)}</td></tr>
+            <tr><td>Progress Payment</td><td class="money">${money($('progressPayment').value)}</td></tr>
+            <tr><td>Final Payment Due Upon Completion</td><td class="money">${money($('finalPayment').value)}</td></tr>
+            <tr><td>Estimate Valid Until</td><td>${escapeHtml($('validUntil').value)}</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Exclusions, Conditions, and Change Orders</h3>
+        <p>${nl2br($('exclusions').value)}</p>
+        <p class="small">This proposal is based on visible conditions only. Additional hidden damage, rot, framing failure, unsafe ledger connection, railing/stair failure, permit requirements, or code-related work must be approved by written change order before added work continues.</p>
+
+        <h3>Client Approval</h3>
+        <p>By signing below, the client authorizes the contractor to begin the work described in this proposal, subject to payment terms and written change-order approval for additional work.</p>
+        <div class="grid">
+          <div>
+            ${signatureData ? `<img class="sig-img" src="${signatureData}" alt="Client Signature">` : '<div style="height:80px;border-bottom:1px solid #111827;"></div>'}
+            <strong>Client Signature</strong><br>
+            <span class="small">Signed By: ${escapeHtml($('signedBy').value || $('clientName').value)}</span><br>
+            <span class="small">Date: ${escapeHtml($('signatureDate').value)}</span>
+          </div>
+          <div>
+            <div style="height:80px;border-bottom:1px solid #111827;"></div>
+            <strong>Contractor Signature</strong><br>
+            <span class="small">${escapeHtml($('businessName').value)}</span><br>
+            <span class="small">Date: ${escapeHtml($('proposalDate').value)}</span>
+          </div>
+        </div>
+
+        <p class="footer-note">Generated from a single-file contractor form. Keep a copy for project records.</p>
+      `;
+
+      updateShareLinks();
+    }
+
+    function updateShareLinks() {
+      const subject = encodeURIComponent(`Deck Restoration Proposal - ${$('clientName').value || 'Client'}`);
+      const body = encodeURIComponent(buildSummaryText());
+      const toEmail = $('sendToEmail')?.value || $('clientEmail').value || '';
+      const mailHref = `mailto:${encodeURIComponent(toEmail)}?subject=${subject}&body=${body}`;
+      $('emailLink').href = mailHref;
+      if ($('deviceEmailLink')) $('deviceEmailLink').href = mailHref;
+    }
+
+    function signedFileName() {
+      return `signed-deck-proposal-${($('clientName').value || 'client').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.html`;
+    }
+
+    function buildSignedHtml() {
+      syncPreview();
+      return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Signed Deck Proposal</title><style>${document.querySelector('style').innerHTML}</style></head><body><div class="app-shell"><section class="preview-document">${$('preview').innerHTML}</section></div></body></html>`;
+    }
+
+    function makeSignedHtmlFile() {
+      const blob = new Blob([buildSignedHtml()], { type: 'text/html' });
+      return new File([blob], signedFileName(), { type: 'text/html' });
+    }
+
+    function downloadSignedHtml() {
+      const file = makeSignedHtmlFile();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(file);
+      a.download = file.name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    async function shareSignedFile() {
+      syncPreview();
+      const file = makeSignedHtmlFile();
+      const shareData = {
+        title: `Deck Restoration Proposal - ${$('clientName').value || 'Client'}`,
+        text: buildSummaryText(),
+        files: [file]
+      };
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+          await navigator.share(shareData);
+        } else if (navigator.share) {
+          await navigator.share({ title: shareData.title, text: shareData.text });
+          alert('Your device shared the text summary. File sharing is not supported in this browser, so use Download Signed Copy or Print / Save PDF for attachments.');
+        } else {
+          downloadSignedHtml();
+          alert('This browser does not support device sharing. The signed HTML copy was downloaded instead.');
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error(err);
+          alert('Share failed. Use Download Signed Copy or Print / Save PDF, then attach it manually in your email or Telegram app.');
+        }
+      }
+    }
+
+    function openTelegramShare() {
+      syncPreview();
+      const text = encodeURIComponent(buildSummaryText());
+      const url = encodeURIComponent(location.href || '');
+      window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+    }
+
+    function openTelegramTarget() {
+      const target = ($('telegramTarget')?.value || '').trim().replace(/^@/, '').replace(/^https?:\/\/t\.me\//i, '');
+      if (!target) {
+        alert('Enter a Telegram username or channel name first, or use Open Telegram Share.');
+        return;
+      }
+      window.open(`https://t.me/${encodeURIComponent(target)}`, '_blank');
+    }
+
+    async function copySummaryText() {
+      syncPreview();
+      const text = buildSummaryText();
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('Proposal summary copied. Paste it into email, Telegram, or text.');
+      } catch {
+        prompt('Copy this proposal summary:', text);
+      }
+    }
+
+    function getDraftData() {
+      const ids = ['businessName','businessPhone','businessEmail','estimateNo','clientName','clientPhone','clientEmail','proposalDate','projectAddress','deckLength','deckWidth','deckHeight','projectType','scopeSummary','exclusions','deposit','progressPayment','finalPayment','validUntil','signedBy','signatureDate','sendToEmail','telegramTarget'];
+      const data = { signatureData, pricingRows: getPricingRows() };
+      ids.forEach(id => data[id] = $(id).value);
+      return data;
+    }
+
+    function applyDraftData(data) {
+      Object.keys(data).forEach(key => {
+        if ($(key)) $(key).value = data[key];
+      });
+      signatureData = data.signatureData || '';
+      renderPricingRows(data.pricingRows || defaultRows);
+      syncPreview();
+    }
+
+    function saveLocalDraft() {
+      localStorage.setItem('deckContractorPacketDraft', JSON.stringify(getDraftData()));
+      alert('Draft saved in this browser.');
+    }
+
+    function loadLocalDraft() {
+      const raw = localStorage.getItem('deckContractorPacketDraft');
+      if (!raw) return alert('No saved draft found in this browser.');
+      applyDraftData(JSON.parse(raw));
+      alert('Draft loaded.');
+    }
+
+    function clearForm() {
+      if (!confirm('Clear this form? This will not remove saved browser drafts unless you overwrite them.')) return;
+      document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+      initDates();
+      renderPricingRows(defaultRows);
+      clearSignature();
+      syncPreview();
+    }
+
+    function setupSignaturePad() {
+      const canvas = $('signaturePad');
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+      let last = null;
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * devicePixelRatio;
+        canvas.height = rect.height * devicePixelRatio;
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#111827';
+      }
+
+      function pos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches ? e.touches[0] : e;
+        return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+      }
+
+      function start(e) {
+        e.preventDefault();
+        drawing = true;
+        last = pos(e);
+      }
+
+      function move(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const p = pos(e);
+        ctx.beginPath();
+        ctx.moveTo(last.x, last.y);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        last = p;
+      }
+
+      function end() {
+        drawing = false;
+        captureSignature(false);
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      canvas.addEventListener('mousedown', start);
+      canvas.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
+      canvas.addEventListener('touchstart', start, { passive: false });
+      canvas.addEventListener('touchmove', move, { passive: false });
+      canvas.addEventListener('touchend', end);
+      resizeCanvas();
+    }
+
+    function clearSignature() {
+      const canvas = $('signaturePad');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      signatureData = '';
+      syncPreview();
+    }
+
+    function captureSignature(showAlert = true) {
+      const canvas = $('signaturePad');
+      signatureData = canvas.toDataURL('image/png');
+      if (showAlert) alert('Signature saved into preview.');
+    }
+
+    document.addEventListener('input', () => updateShareLinks());
+
+    initDates();
+    renderPricingRows(defaultRows);
+    setupSignaturePad();
+    syncPreview();
+  </script>
+</body>
+</html>
